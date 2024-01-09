@@ -1,4 +1,4 @@
-name: Uninstall Helm Release ${{ inputs.release_name}}
+name: Uninstall Helm Release
 
 inputs:
   release_name:
@@ -18,13 +18,11 @@ inputs:
     type: boolean
     default: true
   role-to-assume:
-    required: false
+    required: true
     type: string
-    default: ${{ vars.DEV_ACTION_RUNNER_ROLE_ARN }}
   aws-region:
-    required: false
+    required: true
     type: string
-    default: ${{ vars.DEV_AWS_REGION }}
 
 runs:
   using: composite
@@ -44,15 +42,18 @@ runs:
             role-skip-session-tagging: true
 
       - name: Update kubeconfig
-        run: aws eks update-kubeconfig --name ${{inputs.cluster_name}} --region ${{inputs.aws-region}}
+        shell: bash
+        run: aws eks update-kubeconfig --name ${{ inputs.cluster_name }} --region ${{ inputs.aws-region }}
 
       - name: Uninstall helm release
         id: uninstall
+        shell: bash
         run: |
-            helm uninstall -n ${{inputs.namespace}} ${{inputs.release_name}}     
+            helm uninstall -n ${{ inputs.namespace }} ${{ inputs.release_name }}
 
       - name: Delete Namespace
-        if: ${{ inputs.delete-namespace == "true" }}   
+        if: ${{ inputs.delete-namespace }}
+        shell: bash
         run: |
-            kubectl delete ns ${{inputs.namespace}}
+            kubectl delete ns ${{ inputs.namespace }}
 
