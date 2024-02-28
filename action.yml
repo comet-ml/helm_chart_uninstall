@@ -52,7 +52,7 @@ runs:
             helm uninstall -n ${{ inputs.namespace }} ${{ inputs.release_name }}
 
       - name: Delete Namespace
-        if: ${{ inputs.delete-namespace == true }}
+        if: inputs.delete-namespace == true
         shell: bash
         run: |
             kubectl delete ns ${{ inputs.namespace }}
