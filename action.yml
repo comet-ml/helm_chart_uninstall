@@ -15,8 +15,8 @@ inputs:
     description: Namespace
   delete-namespace:
     required: true
-    type: boolean
-    default: true
+    type: string
+    default: "no"
   role-to-assume:
     required: true
     type: string
@@ -52,7 +52,7 @@ runs:
             helm uninstall -n ${{ inputs.namespace }} ${{ inputs.release_name }}
 
       - name: Delete Namespace
-        if: ${{ inputs.delete-namespace == 'true' }}
+        if: ${{ inputs.delete-namespace == 'yes' }}
         shell: bash
         run: |
             kubectl delete ns ${{ inputs.namespace }}
